@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laundr.me - Coming Soon</title>
+    <style>
+        /* General Styles */
+        :root {
+            --primary-color: #0a0a0a;
+            --secondary-color: #ffffff;
+            --accent-color: #4f46e5;
+            --light-gray: #f3f4f6;
+            --gray: #6b7280;
+            --dark-gray: #1f2937;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--primary-color);
+            color: var(--secondary-color);
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Coming Soon Page Styles */
+        #coming-soon {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+        #coming-soon h1 {
+            font-size: 3rem;
+            margin: 0;
+        }
+        #coming-soon p {
+            font-size: 1.2rem;
+            color: var(--gray);
+        }
+        #secret-login-trigger {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+        }
+        
+        /* Password Prompt Styles */
+        #password-prompt {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        #password-box {
+            background: var(--dark-gray);
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        #password-input {
+            width: 80%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid var(--gray);
+            background: var(--primary-color);
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+        }
+        #password-submit {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--accent-color);
+            color: var(--secondary-color);
+            cursor: pointer;
+        }
+
+        /* Checklist Page Styles */
+        #checklist-page {
+            padding-top: 40px;
+        }
+        .checklist-header h2 {
+            text-align: center;
+            font-size: 2rem;
+        }
+        .task-item {
+            background: var(--dark-gray);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-left: 5px solid var(--accent-color);
+        }
+        .task-item.completed {
+            border-left: 5px solid #22c55e; /* Green */
+            opacity: 0.7;
+        }
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        .task-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        .task-details {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--gray);
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        .detail-label {
+            color: var(--gray);
+        }
+        .task-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        .action-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: var(--gray);
+            color: var(--secondary-color);
+        }
+        .complete-btn {
+            background-color: #22c55e;
+        }
+        .prompt-btn {
+            background-color: var(--accent-color);
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <section id="coming-soon">
+        <div id="secret-login-trigger"></div>
+        <div class="container">
+            <h1>laundr.me</h1>
+            <p>A new way to manage your schedule and payments. Coming soon.</p>
+        </div>
+    </section>
+
+    <section id="password-prompt" class="hidden">
+        <div id="password-box">
+            <h3>Admin Access</h3>
+            <input type="password" id="password-input" placeholder="Enter password">
+            <button id="password-submit">Login</button>
+        </div>
+    </section>
+
+    <section id="checklist-page" class="hidden">
+        <div class="container">
+            <div class="checklist-header">
+                <h2>Laundr.me Project Checklist</h2>
+            </div>
+            <div id="task-list">
+                </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- CONFIGURATION ---
+            const OurSuperSecretPassword = 'Lucy1030'; // IMPORTANT: Change this password
+            const geminiApiUrl = 'YOUR_NETLIFY_FUNCTION_URL'; // IMPORTANT: Add your Netlify Function URL here
+
+            const initialTasks = [
+                {
+                    task: "Set Up Core Services",
+                    priority: "High",
+                    platform: "Render, MongoDB Atlas",
+                    time: "1 hour",
+                    cost: "Free tiers available",
+                    dependency: "None",
+                    completed: false,
+                    prompt: "Create a step-by-step guide for a non-technical person to sign up for a free tier account on Render and a free M0 cluster on MongoDB Atlas."
+                },
+                {
+                    task: "Engage Legal Counsel",
+                    priority: "High",
+                    platform: "Legal Services",
+                    time: "1-2 weeks",
+                    cost: "Varies",
+                    dependency: "None",
+                    completed: false,
+                    prompt: "Draft a professional email to a prospective lawyer specializing in fintech startups. The email should briefly introduce a new P2P payment and scheduling app, state the need for a review of Terms of Service and a Privacy Policy, and ask about their experience and fee structure."
+                },
+                {
+                    task: "Generate Backend Server Structure (AI)",
+                    priority: "High",
+                    platform: "Gemini",
+                    time: "15 minutes",
+                    cost: "Gemini Pro subscription",
+                    dependency: "Step 1",
+                    completed: false,
+                    prompt: "Act as a senior backend developer. Generate a complete, production-ready Node.js server structure using Express.js. Include a main `server.js` file, a database connection module for MongoDB Atlas using Mongoose, and standard security middleware like helmet and cors. The file structure should be organized into `config`, `controllers`, `models`, and `routes` directories."
+                },
+                // Add more tasks here in the same format
+            ];
+
+            // --- STATE MANAGEMENT ---
+            let tasks = [];
+
+            // --- DOM ELEMENTS ---
+            const secretLoginTrigger = document.getElementById('secret-login-trigger');
+            const passwordPrompt = document.getElementById('password-prompt');
+            const passwordInput = document.getElementById('password-input');
+            const passwordSubmit = document.getElementById('password-submit');
+            const comingSoonPage = document.getElementById('coming-soon');
+            const checklistPage = document.getElementById('checklist-page');
+            const taskListContainer = document.getElementById('task-list');
+
+            // --- FUNCTIONS ---
+            function saveTasks() {
+                localStorage.setItem('laundrTasks', JSON.stringify(tasks));
+            }
+
+            function loadTasks() {
+                const storedTasks = localStorage.getItem('laundrTasks');
+                if (storedTasks) {
+                    tasks = JSON.parse(storedTasks);
+                } else {
+                    tasks = initialTasks; // Load initial tasks if none are stored
+                }
+                renderTasks();
+            }
+
+            function renderTasks() {
+                taskListContainer.innerHTML = '';
+                tasks.forEach((task, index) => {
+                    const taskElement = document.createElement('div');
+                    taskElement.className = `task-item ${task.completed ? 'completed' : ''}`;
+                    taskElement.innerHTML = `
+                        <div class="task-header">
+                            <span class="task-title">${task.task}</span>
+                            <input type="checkbox" class="task-checkbox" data-index="${index}" ${task.completed ? 'checked' : ''}>
+                        </div>
+                        <div class="task-details hidden">
+                            <div class="detail-row">
+                                <span class="detail-label">Priority:</span>
+                                <span>${task.priority}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Platform:</span>
+                                <span>${task.platform}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Time Est:</span>
+                                <span>${task.time}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Cost:</span>
+                                <span>${task.cost}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Dependency:</span>
+                                <span>${task.dependency}</span>
+                            </div>
+                            <div class="task-actions">
+                                <button class="action-btn prompt-btn" data-index="${index}">Generate Power Prompt</button>
+                            </div>
+                        </div>
+                    `;
+                    taskListContainer.appendChild(taskElement);
+                });
+            }
+
+            function handleLogin() {
+                if (passwordInput.value === OurSuperSecretPassword) {
+                    passwordPrompt.classList.add('hidden');
+                    comingSoonPage.classList.add('hidden');
+                    checklistPage.classList.remove('hidden');
+                    loadTasks();
+                } else {
+                    alert('Incorrect Password');
+                    passwordInput.value = '';
+                }
+            }
+            
+            async function generatePowerPrompt(promptText, buttonElement) {
+                buttonElement.textContent = 'Generating...';
+                buttonElement.disabled = true;
+                try {
+                    const response = await fetch(geminiApiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ prompt: promptText })
+                    });
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    alert(`--- POWER PROMPT ---\n\n${data.prompt}`);
+
+                } catch (error) {
+                    console.error('Error fetching from Gemini API:', error);
+                    alert('Failed to generate prompt. Make sure your Netlify Function is set up correctly.');
+                } finally {
+                    buttonElement.textContent = 'Generate Power Prompt';
+                    buttonElement.disabled = false;
+                }
+            }
+
+
+            // --- EVENT LISTENERS ---
+            secretLoginTrigger.addEventListener('click', () => {
+                passwordPrompt.classList.remove('hidden');
+                passwordInput.focus();
+            });
+
+            passwordSubmit.addEventListener('click', handleLogin);
+            passwordInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    handleLogin();
+                }
+            });
+
+            taskListContainer.addEventListener('click', (e) => {
+                // Toggle task details visibility
+                if (e.target.classList.contains('task-header') || e.target.parentElement.classList.contains('task-header')) {
+                    const details = e.target.closest('.task-item').querySelector('.task-details');
+                    details.classList.toggle('hidden');
+                }
+                
+                // Handle checkbox
+                if (e.target.classList.contains('task-checkbox')) {
+                    const index = e.target.dataset.index;
+                    tasks[index].completed = e.target.checked;
+                    e.target.closest('.task-item').classList.toggle('completed', e.target.checked);
+                    saveTasks();
+                }
+
+                // Handle prompt button
+                if (e.target.classList.contains('prompt-btn')) {
+                    const index = e.target.dataset.index;
+                    const promptText = tasks[index].prompt;
+                    if(promptText) {
+                         generatePowerPrompt(promptText, e.target);
+                    } else {
+                        alert("No prompt defined for this task.");
+                    }
+                }
+            });
+
+        });
+    </script>
+
+</body>
+</html>
