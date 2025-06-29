@@ -217,9 +217,3 @@ EOF
 
 echo "Backend generation complete."
 chmod +x backend/run.py
-EOF
-
-# --- Make script executable ---
-chmod +x create_backend.sh
-echo "create_backend.sh has been created."
-
