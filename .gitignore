@@ -1,0 +1,48 @@
+# Node / React Native
+node_modules/
+npm-debug.log
+yarn-error.log
+.DS_Store
+*.js.map
+*.podspec
+
+# iOS & Android
+build/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+*.xccheckout
+DerivedData
+*.hmap
+*.ipa
+*.app
+Pods/
+.gradle
+app/build/
+*.iml
+.idea/
+local.properties
+*.keystore
+
+# Python
+__pycache__/
+*.py[cod]
+.Python
+dist/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Environment
+.env
+.env.*
+
+# IDE / OS
+.vscode/
+*.swp
+*~
+.DS_Store
