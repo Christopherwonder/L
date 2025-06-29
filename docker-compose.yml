@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  backend:
+    build: ./backend
+    container_name: laundr_me_backend
+    ports: ["5000:5000"]
+    volumes: ["./backend:/usr/src/app"]
+    env_file: [".env"]
+    depends_on: [db]
+    command: gunicorn --bind 0.0.0.0:5000 --workers 2 --threads 4 --reload run:app
+  db:
+    image: postgres:13-alpine
+    container_name: laundr_me_db
+    volumes: ["postgres_data:/var/lib/postgresql/data/"]
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+volumes:
+  postgres_data:
